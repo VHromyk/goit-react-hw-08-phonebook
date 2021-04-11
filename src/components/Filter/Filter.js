@@ -1,42 +1,33 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { changeFilter } from '../../redux/App/app-actions';
 import styles from './Filter.module.scss';
 import PropTypes from 'prop-types';
-import { deleteContact } from '../../redux/App/app-operations';
-import { filterContacts } from '../../redux/contacts-selectors';
+import { getFilter } from '../../redux/contacts-selectors';
 
-const Filter = ({ list, deleteContact }) => {
-  return (
-    <ul className={styles.list}>
-      {list.map(({ id, name, number }) => (
-        <li key={id} className={styles.item}>
-          <span>{name}</span>
-          <span>{number}</span>
-
-          <button
-            type="button"
-            onClick={() => deleteContact(id)}
-            className={styles.button}
-          >
-            X
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
-};
+const Filter = ({ value, changeFilter }) => (
+  <label className={styles.label}>
+    Find contacts by name:
+    <input
+      type="text"
+      value={value}
+      onChange={changeFilter}
+      className={styles.input}
+    ></input>
+  </label>
+);
 
 Filter.propTypes = {
-  list: PropTypes.array,
-  deleteContact: PropTypes.func,
+  value: PropTypes.string,
+  changeFilter: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
-  list: filterContacts(state),
+  value: getFilter(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  deleteContact: id => dispatch(deleteContact(id)),
+  changeFilter: event => dispatch(changeFilter(event.currentTarget.value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);
